@@ -1,25 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/placePhotoImage"
         android:layout_width="0dp"
-        android:layout_height="100dp"
+        android:layout_height="99dp"
+        android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/common_full_open_on_phone" />
+        app:srcCompat="@drawable/t_l_chargement" />
 
     <TextView
         android:id="@+id/placeNameText"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="BLABLzertyuiortyuiofghjkfghj"
+        android:layout_height="20dp"
+        android:background="@color/common_google_signin_btn_text_light_focused"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/placePhotoImage"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/placePhotoImage" />
+        app:layout_constraintStart_toStartOf="parent" />
 </android.support.constraint.ConstraintLayout>

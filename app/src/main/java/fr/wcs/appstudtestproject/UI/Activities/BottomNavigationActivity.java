@@ -1,7 +1,14 @@
 package fr.wcs.appstudtestproject.UI.Activities;
 
 import android.Manifest;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -9,26 +16,28 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
-import android.widget.TextView;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
 
+import fr.wcs.appstudtestproject.Controllers.LocationController;
+import fr.wcs.appstudtestproject.Controllers.PlaceRequestController;
 import fr.wcs.appstudtestproject.R;
 import fr.wcs.appstudtestproject.UI.Fragments.ListFragment;
 import fr.wcs.appstudtestproject.UI.Fragments.MapsFragment;
 import fr.wcs.appstudtestproject.Utils.PermissionUtils;
 
-public class BottomNavigationActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+public class BottomNavigationActivity extends AppCompatActivity {
 
-    private GoogleApiClient mGoogleApiClient;
     private ArrayList<Fragment> mPagerFragments = new ArrayList<>();
     private Fragment mNewFragment;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private boolean mPermissionDenied = false;
+
+    private LocationController mLocationController;
+    private LocationManager mLocationManager = null;
+    private LocationListener mLocationListener = null;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -58,7 +67,35 @@ public class BottomNavigationActivity extends AppCompatActivity implements Googl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bottom_navigation);
 
+        mLocationController = LocationController.getInstance();
+
+        mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        // Defining a listener that responds to location updates
+        mLocationListener = new LocationListener() {
+            public void onLocationChanged(Location location) {
+                mLocationController.setLocation(location);
+            }
+
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            public void onProviderEnabled(String provider) {
+            }
+
+            public void onProviderDisabled(String provider) {
+            }
+        };
+
         enableMyLocation();
+
+        if (mLocationController.getLocation() != null) {
+            Location currentLocation = mLocationController.getLocation();
+            PlaceRequestController placeRequestController = PlaceRequestController.getInstance();
+            placeRequestController.requestPlaces(currentLocation.getLatitude(),
+                                                currentLocation.getLongitude());
+        }
 
         mPagerFragments.add(Fragment.instantiate(this, MapsFragment.class.getName()));
         mPagerFragments.add(Fragment.instantiate(this, ListFragment.class.getName()));
@@ -70,28 +107,22 @@ public class BottomNavigationActivity extends AppCompatActivity implements Googl
         mNewFragment = mPagerFragments.get(0);
         fragmentTransaction.replace(R.id.content_frame, mNewFragment);
         fragmentTransaction.commit();
-
-
-//        mGoogleApiClient = new GoogleApiClient
-//                    .Builder(this)
-//                    .addApi(Places.GEO_DATA_API)
-//                    .addApi(Places.PLACE_DETECTION_API)
-//                    .enableAutoManage(this, this)
-//                    .build();
     }
 
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-
-    private void enableMyLocation() {
+    private void enableMyLocation() { //Check permissions every time application is launched
+        //Request permissions if needed
         if (ContextCompat.checkSelfPermission(BottomNavigationActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             PermissionUtils.requestPermission(BottomNavigationActivity.this, LOCATION_PERMISSION_REQUEST_CODE,
                     Manifest.permission.ACCESS_FINE_LOCATION, true);
         }
+        //Get last location if permission is granted
+        String provider = mLocationManager.getBestProvider(new Criteria(), false);
+        Location location = mLocationManager.getLastKnownLocation(provider);
+        if (location != null) {
+            mLocationController.setLocation(location);
+        }
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
     }
 
     @Override
