@@ -70,6 +70,14 @@ public class BottomNavigationActivity extends AppCompatActivity implements Googl
         mNewFragment = mPagerFragments.get(0);
         fragmentTransaction.replace(R.id.content_frame, mNewFragment);
         fragmentTransaction.commit();
+
+
+//        mGoogleApiClient = new GoogleApiClient
+//                    .Builder(this)
+//                    .addApi(Places.GEO_DATA_API)
+//                    .addApi(Places.PLACE_DETECTION_API)
+//                    .enableAutoManage(this, this)
+//                    .build();
     }
 
 
