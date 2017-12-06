@@ -39,7 +39,7 @@ Observer{
         mPlaceRequestController.addObserver(this);
 
         mRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        mAdapter = new RecyclerPlaceAdapter(mPlaceRequestController.getPlaces());
+        mAdapter = new RecyclerPlaceAdapter(mPlaceRequestController.getPlaceMap(), getContext());
         mRecycler.setAdapter(mAdapter);
 
 
@@ -51,7 +51,7 @@ Observer{
         mSwipeRefreshLayout.setRefreshing(true);
         Location currentLocation = mLocationController.getLocation();
         mPlaceRequestController.requestPlaces(currentLocation.getLatitude(),
-                                                currentLocation.getLongitude());
+                                                currentLocation.getLongitude(), getActivity());
     }
 
     @Override
@@ -59,9 +59,9 @@ Observer{
         if (observable instanceof PlaceRequestController) {
             mPlaceRequestController = (PlaceRequestController) observable;
             mSwipeRefreshLayout.setRefreshing(false);
-            mAdapter = new RecyclerPlaceAdapter(mPlaceRequestController.getPlaces());
+            mAdapter = new RecyclerPlaceAdapter(mPlaceRequestController.getPlaceMap(), getContext());
             mRecycler.setAdapter(mAdapter);
-            mAdapter.updateAdapter(mPlaceRequestController.getPlaces());
+            mAdapter.updateAdapter(mPlaceRequestController.getPlaceMap());
         }
     }
 

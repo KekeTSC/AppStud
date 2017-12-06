@@ -94,7 +94,7 @@ public class BottomNavigationActivity extends AppCompatActivity {
             Location currentLocation = mLocationController.getLocation();
             PlaceRequestController placeRequestController = PlaceRequestController.getInstance();
             placeRequestController.requestPlaces(currentLocation.getLatitude(),
-                                                currentLocation.getLongitude());
+                                                currentLocation.getLongitude(), this);
         }
 
         mPagerFragments.add(Fragment.instantiate(this, MapsFragment.class.getName()));

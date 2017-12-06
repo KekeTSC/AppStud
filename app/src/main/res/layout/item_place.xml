@@ -8,7 +8,7 @@
     <ImageView
         android:id="@+id/placePhotoImage"
         android:layout_width="0dp"
-        android:layout_height="99dp"
+        android:layout_height="150dp"
         android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -20,6 +20,7 @@
         android:layout_width="0dp"
         android:layout_height="20dp"
         android:background="@color/common_google_signin_btn_text_light_focused"
+        android:paddingLeft="20dp"
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="@+id/placePhotoImage"
         app:layout_constraintEnd_toEndOf="parent"

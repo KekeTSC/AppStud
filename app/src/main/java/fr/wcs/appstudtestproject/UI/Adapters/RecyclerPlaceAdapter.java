@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import fr.wcs.appstudtestproject.R;
@@ -18,11 +19,18 @@ import noman.googleplaces.Place;
 
 public class RecyclerPlaceAdapter extends RecyclerView.Adapter<RecyclerPlaceAdapter.PlaceViewHolder> {
 
+    private LinkedHashMap<Place, String> mPlacesMap;
+
     //Classic RecyclerView Adapter
     private List<Place> mPlaceList;
+    private List<String> mPlacePhotos;
+    private Context mContext;
 
-    public RecyclerPlaceAdapter(List<Place> placeList) {
-        mPlaceList = new ArrayList<>(placeList);
+    public RecyclerPlaceAdapter(LinkedHashMap<Place, String> placeMap, Context context) {
+        mPlacesMap = placeMap;
+        mPlaceList = new ArrayList<>(mPlacesMap.keySet());
+        mPlacePhotos = new ArrayList<>(mPlacesMap.values());
+        mContext = context;
     }
 
     @Override
@@ -34,8 +42,12 @@ public class RecyclerPlaceAdapter extends RecyclerView.Adapter<RecyclerPlaceAdap
 
     @Override
     public void onBindViewHolder(PlaceViewHolder holder, int position) {
+        mPlaceList = new ArrayList<>(mPlacesMap.keySet());
+        mPlacePhotos = new ArrayList<>(mPlacesMap.values());
         final Place placeModel = mPlaceList.get(position);
-        //TODO Glide with result URL of http request
+        Glide.with(mContext)
+                .load(mPlacePhotos.get(position))
+                .into(holder.placePhoto);
         holder.placeName.setText(placeModel.getName());
     }
 
@@ -44,8 +56,8 @@ public class RecyclerPlaceAdapter extends RecyclerView.Adapter<RecyclerPlaceAdap
         return mPlaceList.size();
     }
 
-    public void updateAdapter(List<Place> newPlaceList) { //Notify adapter when list is changed every refresh
-        mPlaceList = newPlaceList;
+    public void updateAdapter(LinkedHashMap<Place, String> newPlaceMap) {
+        mPlacesMap = newPlaceMap;
         notifyDataSetChanged();
     }
 

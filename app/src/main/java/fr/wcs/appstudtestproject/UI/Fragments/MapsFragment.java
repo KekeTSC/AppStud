@@ -2,6 +2,7 @@ package fr.wcs.appstudtestproject.UI.Fragments;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.v4.app.ActivityCompat;
@@ -20,9 +21,11 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import fr.wcs.appstudtestproject.Controllers.LocationController;
 import fr.wcs.appstudtestproject.Controllers.PlaceRequestController;
 import fr.wcs.appstudtestproject.R;
@@ -40,6 +43,7 @@ public class MapsFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_maps, container, false);
+
 
         mPlaceRequestController = PlaceRequestController.getInstance();
 
@@ -76,7 +80,7 @@ public class MapsFragment extends Fragment implements
                         }
                         googleMap.getUiSettings().setMapToolbarEnabled(false);
                         mMap.setOnMyLocationButtonClickListener(MapsFragment.this);
-                        if (mPlaceRequestController.getPlaces() != null) {
+                        if (mPlaceRequestController.getPlaceMap() != null) {
                             placeMarkersOnMap();
                         }
                     }
@@ -93,7 +97,10 @@ public class MapsFragment extends Fragment implements
 
     public void placeMarkersOnMap() {
         mMap.clear();
-        for (Place place : mPlaceRequestController.getPlaces()) {
+        for (int i = 0; i<mPlaceRequestController.getPlaceMap().size(); i++) {
+            final Place place = new ArrayList<>(mPlaceRequestController.getPlaceMap().keySet()).get(i);
+            String url = mPlaceRequestController.getPlaceMap().get(place);
+// add marker to Map
             mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(place.getLatitude(), place.getLongitude()))
                     //TODO  Change marker icon to CircleImageView w/ black border
