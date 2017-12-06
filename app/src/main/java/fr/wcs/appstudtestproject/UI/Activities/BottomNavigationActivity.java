@@ -20,6 +20,8 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
 import fr.wcs.appstudtestproject.Controllers.LocationController;
 import fr.wcs.appstudtestproject.Controllers.PlaceRequestController;
@@ -28,7 +30,7 @@ import fr.wcs.appstudtestproject.UI.Fragments.ListFragment;
 import fr.wcs.appstudtestproject.UI.Fragments.MapsFragment;
 import fr.wcs.appstudtestproject.Utils.PermissionUtils;
 
-public class BottomNavigationActivity extends AppCompatActivity {
+public class BottomNavigationActivity extends AppCompatActivity implements Observer {
 
     private ArrayList<Fragment> mPagerFragments = new ArrayList<>();
     private Fragment mNewFragment;
@@ -36,8 +38,11 @@ public class BottomNavigationActivity extends AppCompatActivity {
     private boolean mPermissionDenied = false;
 
     private LocationController mLocationController;
+    private PlaceRequestController mPlaceRequestController;
     private LocationManager mLocationManager = null;
     private LocationListener mLocationListener = null;
+
+    private ProgressDialog mProgressDialog;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -68,8 +73,17 @@ public class BottomNavigationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_bottom_navigation);
 
         mLocationController = LocationController.getInstance();
+        mPlaceRequestController = PlaceRequestController.getInstance();
+        mPlaceRequestController.addObserver(this);
 
         mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setIndeterminate(true);
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.setTitle(getString(R.string.wait_please));
+        mProgressDialog.setMessage(getString(R.string.searching_bars));
+        mProgressDialog.show();
 
         // Defining a listener that responds to location updates
         mLocationListener = new LocationListener() {
@@ -155,6 +169,20 @@ public class BottomNavigationActivity extends AppCompatActivity {
     private void showMissingPermissionError() {
         PermissionUtils.PermissionDeniedDialog
                 .newInstance(true).show(getSupportFragmentManager(), "dialog");
+    }
+
+    @Override
+    public void update(Observable observable, Object o) {
+        if (observable instanceof PlaceRequestController) {
+            mPlaceRequestController = (PlaceRequestController) observable;
+            mProgressDialog.dismiss();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mPlaceRequestController.deleteObserver(this);
     }
 }
 

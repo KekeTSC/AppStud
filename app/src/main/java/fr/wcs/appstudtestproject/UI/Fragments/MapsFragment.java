@@ -37,7 +37,6 @@ public class MapsFragment extends Fragment implements
 
     private GoogleMap mMap;
     private PlaceRequestController mPlaceRequestController;
-    private ProgressDialog mProgressDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -55,12 +54,6 @@ public class MapsFragment extends Fragment implements
             fragmentTransaction.replace(R.id.map, supportMapFragment).commit();
         }
 
-        mProgressDialog = new ProgressDialog(getActivity());
-        mProgressDialog.setIndeterminate(true);
-        mProgressDialog.setCancelable(false);
-        mProgressDialog.setTitle(getActivity().getString(R.string.wait_please));
-        mProgressDialog.setMessage(getActivity().getString(R.string.searching_bars));
-        mProgressDialog.show();
         if (supportMapFragment != null) {
             supportMapFragment.getMapAsync(new OnMapReadyCallback() {
                 @Override
@@ -111,7 +104,6 @@ public class MapsFragment extends Fragment implements
     public void update(Observable observable, Object o) {
         if (observable instanceof PlaceRequestController) {
             mPlaceRequestController = (PlaceRequestController) observable;
-            mProgressDialog.dismiss();
             placeMarkersOnMap();
         }
     }
