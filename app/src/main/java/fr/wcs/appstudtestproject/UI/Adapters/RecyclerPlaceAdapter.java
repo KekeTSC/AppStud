@@ -42,13 +42,12 @@ public class RecyclerPlaceAdapter extends RecyclerView.Adapter<RecyclerPlaceAdap
 
     @Override
     public void onBindViewHolder(PlaceViewHolder holder, int position) {
-        mPlaceList = new ArrayList<>(mPlacesMap.keySet());
-        mPlacePhotos = new ArrayList<>(mPlacesMap.values());
         final Place placeModel = mPlaceList.get(position);
         Glide.with(mContext)
                 .load(mPlacePhotos.get(position))
                 .into(holder.placePhoto);
         holder.placeName.setText(placeModel.getName());
+
     }
 
     @Override
