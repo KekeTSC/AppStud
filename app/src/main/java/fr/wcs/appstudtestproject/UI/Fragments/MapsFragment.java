@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import fr.wcs.appstudtestproject.Controllers.LocationController;
 import fr.wcs.appstudtestproject.Controllers.PlaceRequestController;
 import fr.wcs.appstudtestproject.R;
@@ -76,7 +75,7 @@ public class MapsFragment extends Fragment implements
                         if (locationController.getLocation() != null) {
                             Location location = locationController.getLocation();
                             LatLng locationLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locationLatLng, 14f));
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locationLatLng, 15f));
                         }
                         googleMap.getUiSettings().setMapToolbarEnabled(false);
                         mMap.setOnMyLocationButtonClickListener(MapsFragment.this);
